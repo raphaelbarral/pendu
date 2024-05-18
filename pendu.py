@@ -1,17 +1,16 @@
 import random
 from unidecode import unidecode
 
-nombre_de_chances = 6
-
-mots = ['chien', 'chat', 'rat', 'renard', 'wapiti', 'kangourou']
+with open('mots_pendu.txt', 'r') as f:
+    mots = f.read().split('\n')
 
 
 def verifier_lettre(lettre, mot):
     global lettres_trouvees
     succes = False
     i = 0
-    for l in mot:
-        if l == lettre:
+    for char in mot:
+        if char == lettre:
             succes = True
             lettres_trouvees[i] = True
         i += 1
@@ -25,6 +24,7 @@ def choisir_mot(mots):
 
 jouer = True
 while jouer:
+    nombre_de_chances = 6
     mot = choisir_mot(mots)
     taille_mot = len(mot)
     lettres_trouvees = [False] * taille_mot
@@ -49,7 +49,7 @@ while jouer:
     if gagner:
         print('Bien joué vous avez gagné')
     else:
-        print('La partie est perdu')
+        print(f'La partie est perdu\nLe mot était {mot}.')
 
-    if input('Voulez vous rejouez? (y/n) ').lower() == 'n':
+    if input('Voulez-vous rejouez? (y/n) ').lower() == 'n':
         jouer = False
