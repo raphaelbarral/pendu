@@ -19,7 +19,7 @@ def verifier_lettre(lettre, mot):
 
 
 def choisir_mot(mots):
-    return random.choice(mots)
+    return unidecode(random.choice(mots))
 
 
 jouer = True
@@ -47,9 +47,11 @@ while jouer:
             break
 
     if gagner:
-        print('Bien joué vous avez gagné')
+        print(f'Bien joué vous avez gagné\nLe mot était bien {mot}.')
     else:
         print(f'La partie est perdu\nLe mot était {mot}.')
 
     if input('Voulez-vous rejouez? (y/n) ').lower() == 'n':
         jouer = False
+
+exit()
