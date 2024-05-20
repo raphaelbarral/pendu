@@ -1,14 +1,14 @@
 import random
 from unidecode import unidecode
 
+
 def charger_fichier(filename):
     with open(filename, 'r') as f:
         mots = f.read().split('\n')
     return mots
 
 
-def verifier_lettre(lettre, mot):
-    global lettres_trouvees
+def verifier_lettre(lettre, mot, lettres_trouvees):
     succes = False
     i = 0
     for char in mot:
@@ -19,52 +19,53 @@ def verifier_lettre(lettre, mot):
     return succes
 
 
-def donner_indice(mot):
+def donner_indice(mot, lettres_trouvees):
     lettres_restantes = [mot[i] for i in range(len(mot)) if not lettres_trouvees[i]]
     indice = random.choice(lettres_restantes)
-    verifier_lettre(indice, mot)
-    print(f'La lettre {indice} vous est donné comme indice.')
+    verifier_lettre(indice, mot, lettres_trouvees)
+    print(f'La lettre {indice} vous est donnée comme indice.')
 
 
 def choisir_mot(mots):
     return unidecode(random.choice(mots))
 
 
-mots = charger_fichier(input('Entrez un nom de fichier pour le charger, sinon laissez vide : ') or 'mots_pendu.txt')
+def main():
+    mots = charger_fichier(input('Entrez un nom de fichier pour le charger, sinon laissez vide : ') or 'mots_pendu.txt')
 
-jouer = True
-while jouer:
-    nombre_de_chances = 6
-    mot = choisir_mot(mots)
-    print(mot)
-    lettres_trouvees = [False] * len(mot)
+    jouer = True
+    while jouer:
+        nombre_de_chances = 6
+        mot = choisir_mot(mots)
+        print(mot)
+        lettres_trouvees = [False] * len(mot)
 
-    gagner = False
-    while nombre_de_chances:
-        print('\n' + ''.join(list(map(lambda a, b: b if a else '_', lettres_trouvees, mot))))
-        print(f'Nombre de chances restantes : {nombre_de_chances}')
+        gagner = False
+        while nombre_de_chances:
+            print('\n' + ''.join(list(map(lambda a, b: b if a else '_', lettres_trouvees, mot))))
+            print(f'Nombre de chances restantes : {nombre_de_chances}')
 
-        while not (lettre := unidecode(input('Veuillez entrer une lettre : ')[0])).isalpha():
-            continue
+            while not (lettre := unidecode(input('Veuillez entrer une lettre : ')[0])).isalpha():
+                continue
 
-        if not verifier_lettre(lettre, mot):
-            nombre_de_chances -= 1
-            print('La lettre n\'est pas dans le mot')
-            if nombre_de_chances == 1:
-                donner_indice(mot)
+            if not verifier_lettre(lettre, mot, lettres_trouvees):
+                nombre_de_chances -= 1
+                print('La lettre n\'est pas dans le mot')
+                if nombre_de_chances == 1:
+                    donner_indice(mot, lettres_trouvees)
+            else:
+                print('La lettre est bien dans le mot')
+
+            if gagner := all(lettres_trouvees):
+                break
+
+        if gagner:
+            print(f'Bien joué vous avez gagné\nLe mot était bien {mot}.')
         else:
-            print('La lettre est bien dans le mot')
+            print(f'La partie est perdu\nLe mot était {mot}.')
+
+        if input('Voulez-vous rejouez? (y/n) ').lower() == 'n':
+            jouer = False
 
 
-        if gagner := all(lettres_trouvees):
-            break
-
-    if gagner:
-        print(f'Bien joué vous avez gagné\nLe mot était bien {mot}.')
-    else:
-        print(f'La partie est perdu\nLe mot était {mot}.')
-
-    if input('Voulez-vous rejouez? (y/n) ').lower() == 'n':
-        jouer = False
-
-exit()
+main()
