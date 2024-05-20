@@ -1,8 +1,10 @@
 import random
 from unidecode import unidecode
 
-with open('mots_pendu.txt', 'r') as f:
-    mots = f.read().split('\n')
+def charger_fichier(filename):
+    with open(filename, 'r') as f:
+        mots = f.read().split('\n')
+    return mots
 
 
 def verifier_lettre(lettre, mot):
@@ -14,20 +16,28 @@ def verifier_lettre(lettre, mot):
             succes = True
             lettres_trouvees[i] = True
         i += 1
-
     return succes
+
+
+def donner_indice(mot):
+    lettres_restantes = [mot[i] for i in range(len(mot)) if not lettres_trouvees[i]]
+    indice = random.choice(lettres_restantes)
+    verifier_lettre(indice, mot)
+    print(f'La lettre {indice} vous est donné comme indice.')
 
 
 def choisir_mot(mots):
     return unidecode(random.choice(mots))
 
 
+mots = charger_fichier(input('Entrez un nom de fichier pour le charger, sinon laissez vide : ') or 'mots_pendu.txt')
+
 jouer = True
 while jouer:
     nombre_de_chances = 6
     mot = choisir_mot(mots)
-    taille_mot = len(mot)
-    lettres_trouvees = [False] * taille_mot
+    print(mot)
+    lettres_trouvees = [False] * len(mot)
 
     gagner = False
     while nombre_de_chances:
@@ -40,8 +50,11 @@ while jouer:
         if not verifier_lettre(lettre, mot):
             nombre_de_chances -= 1
             print('La lettre n\'est pas dans le mot')
+            if nombre_de_chances == 1:
+                donner_indice(mot)
         else:
             print('La lettre est bien dans le mot')
+
 
         if gagner := all(lettres_trouvees):
             break
