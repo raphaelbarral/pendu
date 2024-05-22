@@ -3,8 +3,14 @@ from unidecode import unidecode
 
 
 def charger_fichier(filename):
-    with open(filename, 'r') as f:
-        mots = f.read().split('\n')
+    try:
+        f = open(filename, 'r')
+    except FileNotFoundError:
+        print('Entrez un nom de fichier valide ou n\'entrez rien.')
+        return False
+    else:
+        with f:
+            mots = f.read().split('\n')
     return mots
 
 
@@ -31,7 +37,8 @@ def choisir_mot(mots):
 
 
 def main():
-    mots = charger_fichier(input('Entrez un nom de fichier pour le charger, sinon laissez vide : ') or 'mots_pendu.txt')
+    while not (mots := charger_fichier(input('Entrez un nom de fichier pour le charger, sinon laissez vide : ') or 'mots_pendu.txt')):
+        continue
 
     jouer = True
     while jouer:
