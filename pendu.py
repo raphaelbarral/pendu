@@ -1,5 +1,5 @@
 import random
-from unidecode import unidecode
+from unicodedata import normalize
 
 
 def charger_fichier(filename):
@@ -33,7 +33,7 @@ def donner_indice(mot, lettres_trouvees):
 
 
 def choisir_mot(mots):
-    return unidecode(random.choice(mots))
+    return normalize('NFD', random.choice(mots)).encode('ASCII', 'ignore').decode('utf8')
 
 
 def main():
@@ -52,8 +52,10 @@ def main():
             print('\n' + ''.join(list(map(lambda a, b: b if a else '_', lettres_trouvees, mot))))
             print(f'Nombre de chances restantes : {nombre_de_chances}')
 
-            while not (lettre := unidecode(input('Veuillez entrer une lettre : ')[0])).isalpha():
+            while not (lettre := normalize('NFD', input('Veuillez entrer une lettre : ')).encode('ASCII', 'ignore').decode('utf8')).isalpha():
                 continue
+
+            lettre = lettre[0]
 
             if not verifier_lettre(lettre, mot, lettres_trouvees):
                 nombre_de_chances -= 1
